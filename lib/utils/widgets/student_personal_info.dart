@@ -1,14 +1,12 @@
 import 'package:merit_tuition_v1/constants/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:merit_tuition_v1/pages/fees_details.dart';
 
 class studentPersonalInfo extends StatelessWidget {
   final String studentImagePath;
   final String studentName;
   final String location;
-  final int lessonCount;
+  final String lessonCount;
   final String yearGroup;
-  final int stdId;
 
   const studentPersonalInfo({
     super.key,
@@ -18,7 +16,6 @@ class studentPersonalInfo extends StatelessWidget {
     required this.location,
     required this.lessonCount,
     required this.yearGroup,
-    required this.stdId,
   });
 
   final Size size;
@@ -59,38 +56,23 @@ class studentPersonalInfo extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => FeesDetails(studentId: stdId),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      width: size.width * 0.22,
-                      decoration: ShapeDecoration(
-                        color: const Color(0xFFE8914F),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(03),
-                        ),
+                  Container(
+                    width: size.width * 0.22,
+                    decoration: ShapeDecoration(
+                      color: const Color(0xFFE8914F),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(03),
                       ),
-                      child: Flexible(
-                        child: Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Container(
-                            width: 10,
-                            child: Center(
-                              child: Text(
-                                'Fees',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: FittedBox(
+                        child: Text(
+                          location,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),

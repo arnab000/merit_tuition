@@ -76,82 +76,27 @@ class _ParentsHomeState extends State<ParentsHome> {
         notificationAvailable: true,
         notificationCount: 5,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: GestureDetector(
-        onTap: () => {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const AddStudentPage()))
-        },
-        child: Container(
-          width: 60,
-          height: 60,
-          padding: const EdgeInsets.all(16),
-          decoration:
-              const BoxDecoration(color: primaryColor, shape: BoxShape.circle),
-          child: const SvgIcon(path: homeIcon),
+      body: Padding(
+        padding: const EdgeInsets.fromLTRB(15, 15, 15, 10),
+        child: Column(
+          children: [
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 0, 0, 0),
+                  child: Text(
+                    "STUDENTS",
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+                  ),
+                )
+              ],
+            ),
+            Students(rootcontext: context),
+            //  ElevatedButton(onPressed: (){}, child: child)
+          ],
         ),
       ),
-      body: isListEmpty
-          ? Padding(
-              padding: const EdgeInsets.fromLTRB(15, 15, 15, 10),
-              child: Center(
-                child: Material(
-                  elevation: 1.5,
-                  child: Container(
-                    height: MediaQuery.of(context).size.height * 0.4,
-                    decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.rectangle,
-                        border: Border()),
-                  ),
-                ),
-              ),
-            )
-          : Padding(
-              padding: const EdgeInsets.fromLTRB(15, 15, 15, 10),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      const Text(
-                        welcomeText, /////  WELCOME BACK TEXT
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                            color: Color(welcomeTextColor)),
-                      ),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      Text(
-                        name,
-
-                        /// NAME OF PARENT
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w700, fontSize: 22),
-                      )
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(2, 0, 0, 0),
-                        child: Text(
-                          "Students",
-                          style: TextStyle(
-                              fontSize: 22, fontWeight: FontWeight.w700),
-                        ),
-                      )
-                    ],
-                  ),
-                  Students(rootcontext: context)
-                ],
-              ),
-            ),
       drawer: const Drawer(),
       bottomNavigationBar: ParentsBottomNavBar(context),
     );

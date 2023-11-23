@@ -84,7 +84,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
       Map<String, dynamic> result = jsonDecode(response.body);
       // ignore: use_build_context_synchronously
       print(jsonDecode(response.body));
-      ScaffoldMessenger.of(context).showSnackBar( SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(result['response']),
         backgroundColor: Colors.red,
       ));
@@ -98,20 +98,10 @@ class _AddStudentPageState extends State<AddStudentPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Row(children: [
-          const Text(
-            'Register Student!',
-            style: headerStyle,
-          ),
-          const SizedBox(
-            width: 16,
-          ),
-          Image.asset(
-            'assets/register.png',
-            height: 20,
-            width: 20,
-          )
-        ]),
+        title: const Text(
+          'Register Student!',
+          style: headerStyle,
+        ),
       ),
       body: ListView(children: <Widget>[
         Padding(
@@ -194,7 +184,6 @@ class _AddStudentPageState extends State<AddStudentPage> {
                   header: 'Assignment Time',
                 ),
                 const SizedBox(height: 20),
-                
                 const SizedBox(height: 72),
                 Container(
                   width: screenWidth,

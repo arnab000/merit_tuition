@@ -10,15 +10,31 @@ class StudentCard extends StatelessWidget {
   final Student student;
 
   const StudentCard({super.key, required this.student});
-   dynamic _getImage(){
-    if(this.student.user.photo!=null){
+  dynamic _getImage() {
+    if (this.student.user.photo != null) {
       return NetworkImage(this.student.user.photo);
     }
     return AssetImage('assets/parent.png');
   }
 
-  dynamic _getId(){
+  dynamic _getId() {
     return student.id;
+  }
+
+  dynamic _getStudentHourlyRate() {
+    return student.hourlyFee.toString();
+  }
+
+  dynamic _getStudentsYearGroup() {
+    return student.yearGroup;
+  }
+
+  dynamic _getStudentBranch() {
+    return student.branch;
+  }
+
+  dynamic _getStudentMeritScore() {
+    return student.score;
   }
 
   @override
@@ -26,10 +42,20 @@ class StudentCard extends StatelessWidget {
     print(this.student.id);
     return GestureDetector(
       onTap: () {
-                    Navigator.push(context,
-            MaterialPageRoute(builder: (context) =>  StudentProfile(studentId: _getId(), name: '${student.user.firstName}  ${student.user.lastName}' , email: student.user.email)));
-                  },
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => StudentProfile(
+                      studentId: _getId(),
+                      name:
+                          '${student.user.firstName}  ${student.user.lastName}',
+                      email: student.user.email,
+                      branch: student.branch,
+                      yearGroup: student.yearGroup,
+                    )));
+      },
       child: Card(
+        color: primaryColor,
         elevation: 0.5,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -51,28 +77,23 @@ class StudentCard extends StatelessWidget {
                           padding: const EdgeInsets.fromLTRB(15.0, 0, 15.0, 0),
                           child: CircleAvatar(
                             backgroundImage: _getImage(),
-                            backgroundColor: Colors.white,
                             radius: 26,
                           ),
                         ),
                         Container(
+                          width: 150,
+                          height: 40,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
                             // mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                this.student.user.firstName,
+                                "${student.user.firstName} ${student.user.lastName}",
                                 style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              Text(
-                                this.student.user.lastName,
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 17,
+                                    color: Colors.black,
+                                    fontSize: 14,
+                                    overflow: TextOverflow.ellipsis,
                                     fontWeight: FontWeight.w600),
                               ),
                             ],
@@ -82,6 +103,7 @@ class StudentCard extends StatelessWidget {
                     ),
                   ),
                   Container(
+                    width: 70,
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
                       child: Column(
@@ -89,17 +111,20 @@ class StudentCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         // mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            "\$56",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 17,
-                                fontWeight: FontWeight.w700),
+                          Center(
+                            child: Text(
+                              "\£${_getStudentHourlyRate()}",
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 12,
+                                  overflow: TextOverflow.ellipsis,
+                                  fontWeight: FontWeight.w700),
+                            ),
                           ),
                           Text(
-                            "Due Fee",
+                            "Hourly Fee",
                             style: TextStyle(
-                                color: Color(lightColorForCard),
+                                color: const Color(0xFF898989),
                                 fontSize: 11,
                                 fontWeight: FontWeight.w400),
                           ),
@@ -110,46 +135,24 @@ class StudentCard extends StatelessWidget {
                 ],
               ),
             ),
-            Container(
-              height: 165,
-              decoration: BoxDecoration(color: Colors.white),
-              width: double.infinity,
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      StudentCardDetails(
-                          heading: "PRIMARY", status: this.student.level),
-                      StudentCardDetails(
-                          heading: "BRANCH", status: this.student.branch),
-                      StudentCardDetails(
-                          heading: "STATUS", status: this.student.status)
-                    ],
-                  ),
-                  SizedBox(
-                    height: 25,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      StudentCardDetailsWithIcon(
-                        heading: this.student.assessmentDate,
-                        status: 'ASSESMENT DATE',
-                        path: calendarIcon,
-                      ),
-                      StudentCardDetailsWithIcon(
-                        heading: this.student.assessmentTime,
-                        status: 'ASSESMENT TIME',
-                        path: timerIcon,
-                      ),
-                    ],
-                  )
-                ],
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Flexible(
+                    child: StudentCardDetails(
+                        heading: "YEAR-GROUP",
+                        status: "${_getStudentsYearGroup()}")),
+                Flexible(
+                    child: StudentCardDetails(
+                        heading: "BRANCH", status: "${_getStudentBranch()}")),
+                Flexible(
+                    child: StudentCardDetails(
+                        heading: "MERIT SCORE",
+                        status: "${_getStudentMeritScore()}"))
+              ],
+            ),
+            SizedBox(
+              height: 5,
             )
           ],
         ),

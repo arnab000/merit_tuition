@@ -4,9 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:merit_tuition_v1/pages/SignUpPage.dart';
-import 'package:merit_tuition_v1/pages/parents_dashboard.dart';
-import 'package:merit_tuition_v1/pages/teacherDashboard.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:merit_tuition_v1/constants/textstyles.dart';
 
@@ -21,12 +19,14 @@ class CatchupLesson extends StatefulWidget {
 
 class _CatchupLessonState extends State<CatchupLesson> {
   final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
   final TextEditingController changedLessonDate = TextEditingController();
   final TextEditingController dateInput = TextEditingController();
   String selectedDropDownItem = '';
   String selectedDropDownItemCatchUp = "";
   List<String> list = [];
-  List<String> allLessons =[];
+  List<String> allLessons = [];
 
   bool _isAuthenticated = false; // Simulated authentication status
 
@@ -70,7 +70,8 @@ class _CatchupLessonState extends State<CatchupLesson> {
       ));
     }
   }
-   Future<void> _getAllLessonByDate() async {
+
+  Future<void> _getAllLessonByDate() async {
     // Simulated authentication logic - Replace with actual authentication
 
     final SharedPreferences sharedPreferences =
