@@ -45,11 +45,13 @@ class _LoginPageState extends State<LoginPage> {
         sharedPreferences.setString('token', result['response']);
         // ignore: use_build_context_synchronously
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => widget.userType == 'parent'
-                    ? const ParentsHome()
-                    : const TeacherDashboard()));
+          context,
+          MaterialPageRoute(
+            builder: (context) => widget.userType == 'parent'
+                ? const ParentsHome()
+                : const TeacherDashboard(),
+          ),
+        );
       } catch (e) {
         print(response);
       }
@@ -70,26 +72,21 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Row(children: [
-          const Text(
-            'Welcome Back',
-            style: headerStyle,
-          ),
-          const SizedBox(
-            width: 16,
-          ),
-          Image.asset('assets/welcome.png')
-        ]),
+        title: const Text(
+          'Welcome Back',
+          style: headerStyle,
+        ),
       ),
-      body: ListView(children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
+      body: ListView(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 const Text(
-                  'Enter your email address and password to login to your account',
+                  'Enter your email address and password.',
                   style: disabledTextStyle,
                 ),
                 const SizedBox(
@@ -105,9 +102,12 @@ class _LoginPageState extends State<LoginPage> {
                 TextField(
                   controller: _usernameController,
                   decoration: const InputDecoration(
-                      prefixIcon: Opacity(
-                          opacity: 0.3, child: Icon(Icons.email_outlined)),
-                      border: OutlineInputBorder()),
+                    prefixIcon: Opacity(
+                      opacity: 0.3,
+                      child: Icon(Icons.email_outlined),
+                    ),
+                    border: OutlineInputBorder(),
+                  ),
                 ),
                 const SizedBox(
                   height: 22,
@@ -159,22 +159,31 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                const Center(child:  Text("Don't have a account?", style: normalTextStyle,)),
-                
+                const Center(
+                  child: Text(
+                    "Don't have a account?",
+                    style: normalTextStyle,
+                  ),
+                ),
                 Center(
                   child: TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const SignUpPage()));
-                      },
-                      child: const Text("Create an account", style: nyonTextStyle,)
-                      ),
-                )
-              ]),
-        ),
-      ]),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SignUpPage()));
+                    },
+                    child: const Text(
+                      "Create an account",
+                      style: nyonTextStyle,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

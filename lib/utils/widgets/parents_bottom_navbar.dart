@@ -26,7 +26,6 @@ class ParentsBottomNavBar extends StatelessWidget {
             child: ParentsBottomNavigationItem(
                 onPressed: () => {}, iconPath: userIcon),
           ),
-          const Spacer(),
           Expanded(
             child: ParentsBottomNavigationItem(
                 onPressed: () => {}, iconPath: reportIcon),

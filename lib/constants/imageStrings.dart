@@ -14,3 +14,6 @@ const String mathBanner = "assets/images/MathBanner.png";
 const String englishBanner1 = "assets/images/EnglishBanner1.png";
 const String englishBanner2 = "assets/images/EnglishBanner2.png";
 const String scienceBanner = "assets/images/ScienceBanner.png";
+const String happyEmoji = "assets/images/happyEmoji.png";
+const String sadEmoji = "assets/images/sadEmoji.png";
+const String hw2 = "assets/images/hw2.png";

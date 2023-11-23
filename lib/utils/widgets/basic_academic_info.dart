@@ -1,4 +1,3 @@
-
 import 'package:merit_tuition_v1/constants/colors.dart';
 
 import 'package:flutter/material.dart';
@@ -9,13 +8,12 @@ class studentBasicAcademicInfo extends StatelessWidget {
   final String lessonCount;
   final dynamic studentId;
 
-  const studentBasicAcademicInfo({
-    super.key,
-    required this.size,
-    required this.selectedLessonName,
-    required this.lessonCount,
-    required this.studentId
-  });
+  const studentBasicAcademicInfo(
+      {super.key,
+      required this.size,
+      required this.selectedLessonName,
+      required this.lessonCount,
+      required this.studentId});
 
   final Size size;
 
@@ -29,10 +27,11 @@ class studentBasicAcademicInfo extends StatelessWidget {
           GestureDetector(
             onTap: () {
               Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => FeesDetails(studentId: studentId,)));
-                      
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => FeesDetails(
+                            studentId: studentId,
+                          )));
             },
             child: Container(
               // height: size.height * 0.04,
@@ -61,7 +60,6 @@ class studentBasicAcademicInfo extends StatelessWidget {
               ),
             ),
           ),
-          
           Container(
             // height: size.height * 0.04,
             // width: size.width * 0.25,

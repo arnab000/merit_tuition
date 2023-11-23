@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http; // Import the http package.
 import 'package:merit_tuition_v1/components/student.dart';
+import 'package:merit_tuition_v1/constants/colors.dart';
+import 'package:merit_tuition_v1/pages/addStudentByParent.dart';
 import 'package:merit_tuition_v1/utils/widgets/student_card.dart';
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart'; // Import for JSON parsing.
-
 
 class Students extends StatefulWidget {
   final BuildContext rootcontext;
@@ -19,13 +20,13 @@ class Students extends StatefulWidget {
 class _StudentsState extends State<Students> {
   Future<List<Student>> fetchData() async {
     try {
-      final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+      final SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
       var token = sharedPreferences.getString('token');
       http.Response response = await http.get(
         Uri.parse('http://admin.merittutors.co.uk/api/parent-student'),
         headers: {
-          'Authorization':
-              'Token $token', // Add the authorization header
+          'Authorization': 'Token $token', // Add the authorization header
         },
       );
 
@@ -34,9 +35,8 @@ class _StudentsState extends State<Students> {
 
         print("printing json data");
         print(jsonDataList);
-        
+
         final List<Student> students = jsonDataList.map((jsonData) {
-          
           return Student(
             // Map JSON fields to Student class properties here.
             id: (jsonData['id']),
@@ -98,11 +98,62 @@ class _StudentsState extends State<Students> {
           final studentsData = snapshot.data!;
           print("students in builder");
           print(studentsData);
+
           return Expanded(
             child: ListView.separated(
-              itemCount: studentsData.length,
+              itemCount: studentsData.length + 1,
               itemBuilder: (rootcontext, index) {
-                return StudentCard(student: studentsData[index]);
+                if (index < studentsData.length) {
+                  // Render StudentCard for each student
+                  return StudentCard(student: studentsData[index]);
+                } else {
+                  // Render the button as the last item
+                  return Container(
+                    height: 70,
+                    decoration: BoxDecoration(
+                      color: primaryColor,
+                      borderRadius: BorderRadius.circular(
+                          8), // Fix: Change 'border' to 'borderRadius'
+                    ),
+                    child: Expanded(
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(primaryColor),
+                          shape: MaterialStateProperty.all<OutlinedBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const AddStudentPage()));
+                          // Add your button's functionality here
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.add_circle_outline_sharp,
+                              color: Colors.black,
+                            ),
+                            const SizedBox(
+                              width: 2,
+                            ),
+                            Text(
+                              "ADD A NEW STUDENT",
+                              style: TextStyle(color: Colors.black),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }
               },
               separatorBuilder: (BuildContext context, int index) {
                 return SizedBox(
@@ -116,4 +167,3 @@ class _StudentsState extends State<Students> {
     );
   }
 }
-

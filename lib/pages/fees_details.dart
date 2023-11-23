@@ -3,8 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:merit_tuition_v1/components/stripe_api.dart';
+
 import 'package:merit_tuition_v1/constants/colors.dart';
 import 'package:merit_tuition_v1/constants/icons.dart';
 import 'package:merit_tuition_v1/pages/paymentType.dart';
@@ -58,6 +57,9 @@ class _FeesDetailsState extends State<FeesDetails> {
           totalFees += double.parse(element["fee"]);
           totalPaid += double.parse(element["paid"]);
           totalDue += double.parse(element["due"]);
+          if (totalDue < 0.001) {
+            totalDue = totalDue * (-1.0);
+          }
         });
 
         return result;
@@ -80,14 +82,17 @@ class _FeesDetailsState extends State<FeesDetails> {
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
     final double width = MediaQuery.of(context).size.width;
-
+    BuildContext thisContext = context;
     return FutureBuilder<List<dynamic>>(
       future: getStudentBills(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          // While waiting for data, you can show a loading indicator.
           return Scaffold(
-              appBar: FeesAppBar(title: "Fees Details", onTap: () {}),
+              appBar: FeesAppBar(
+                  title: "Fees Details",
+                  onTap: () {
+                    Navigator.pop(thisContext);
+                  }),
               body: Center(
                 child: Container(
                   width: 100, // Adjust the width as needed
@@ -104,41 +109,12 @@ class _FeesDetailsState extends State<FeesDetails> {
           return Text('Error: ${snapshot.error}');
         } else {
           // Data has been successfully fetched.
+          print("THIS IS SNAPSHOT");
+          print(snapshot.data);
 
           final studentBills = snapshot.data!;
 
           return Scaffold(
-            floatingActionButton: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 20, 20),
-              child: GestureDetector(
-                onTap: () {
-                  
-                  // StripeAPI.createStripeCustomer().then((value) =>  StripeAPI.makePayment("65", "USD", context));
-                  if (totalDue != null) {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => PaymentType(amount: (totalDue.abs()*100).toInt().toString())));
-                  }
-                },
-                child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  SvgPicture.asset(
-                    arrowRightIcon1,
-                    height: 20,
-                    width: 20,
-                    fit: BoxFit.contain,
-                  ),
-                  Text(
-                    'Pay Now',
-                    style: TextStyle(
-                      color: Color(0xFFFB95E1),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  )
-                ]),
-              ),
-            ),
             appBar: FeesAppBar(title: "Fees Details", onTap: () {}),
             body: SingleChildScrollView(
               child: Padding(
@@ -147,7 +123,7 @@ class _FeesDetailsState extends State<FeesDetails> {
                   children: [
                     const SizedBox(height: 20),
                     SizedBox(
-                      height: 170,
+                      height: 80,
                       child: Stack(
                         children: [
                           Container(
@@ -192,13 +168,13 @@ class _FeesDetailsState extends State<FeesDetails> {
                           OverflowBox(
                             alignment: Alignment(1.0, -2.0),
                             maxHeight:
-                                150, // Adjust this value to control the overflow
+                                70, // Adjust this value to control the overflow
                             child: Image.asset(
                               "assets/images/fees_details.png",
                               fit: BoxFit
                                   .cover, // You can adjust the fit as needed
-                              width: 140, // Adjust the width as needed
-                              height: 140, // Adjust the height as needed
+                              width: 75, // Adjust the width as needed
+                              height: 75, // Adjust the height as needed
                             ),
                           ),
                         ],
@@ -225,7 +201,7 @@ class _FeesDetailsState extends State<FeesDetails> {
                       ],
                     ),
                     const SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -274,7 +250,7 @@ class _FeesDetailsState extends State<FeesDetails> {
                       height: 15,
                     ),
                     Container(
-                      height: height * 0.4,
+                      height: height * 0.6,
                       width: double.infinity,
                       child: Expanded(
                         child: Scrollbar(
@@ -284,25 +260,46 @@ class _FeesDetailsState extends State<FeesDetails> {
                           thumbVisibility: true,
                           controller: _feesScrollController,
                           radius: const Radius.circular(5),
-                          child: GridView.builder(
-                              gridDelegate:
-                                  const SliverGridDelegateWithMaxCrossAxisExtent(
-                                maxCrossAxisExtent: 300,
-                                crossAxisSpacing: 10,
-                                mainAxisSpacing: 20,
-                              ),
+                          child: ListView.separated(
                               itemCount: studentBills.length,
+                              separatorBuilder: ((context, index) {
+                                return SizedBox(
+                                  height: 10,
+                                );
+                              }),
                               itemBuilder: (context, index) {
+                                final double? paid = double.tryParse(
+                                    studentBills[index]["paid"]);
+                                final double? due =
+                                    double.tryParse(studentBills[index]["due"]);
+                                final double? fee =
+                                    double.tryParse(studentBills[index]["fee"]);
                                 return FeesDetailsCard(
-                                  feesType: studentBills[index]["title"],
-                                  amount: studentBills[index]["fee"],
-                                  paymentStatus: studentBills[index]["status"],
-                                  ontap: () {},
+                                  title: studentBills[index]["title"],
+                                  fee: fee!,
+                                  paidBill: paid!,
+                                  dueBill: due!,
+                                  month: studentBills[index]["bill_date"],
+                                  onPressed: () {
+                                    if (due != null) {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => PaymentType(
+                                                  amount: (due.abs() * 100)
+                                                      .toInt()
+                                                      .toString())));
+                                    }
+                                  },
+                                  status: '',
                                 );
                               }),
                         ),
                       ),
                     ),
+                    SizedBox(
+                      height: 10,
+                    )
                   ],
                 ),
               ),
