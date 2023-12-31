@@ -27,16 +27,16 @@ class FeesAppBar extends StatelessWidget implements PreferredSizeWidget {
             color: Color(0xFF000000)),
       ),
       centerTitle: true,
-      actions: [
-        GestureDetector(
-            onTap: () {
-              //filter button code
-            },
-            child: Icon(Icons.filter_alt_outlined)),
-        SizedBox(
-          width: 5,
-        )
-      ],
+      // actions: [
+      //   GestureDetector(
+      //       onTap: () {
+      //         //filter button code
+      //       },                          ///commented on 2 DEC
+      //       child: Icon(Icons.filter_alt_outlined)),
+      //   SizedBox(
+      //     width: 5,
+      //   )
+      // ],
     );
   }
 

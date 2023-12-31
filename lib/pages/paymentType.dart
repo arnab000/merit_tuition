@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:merit_tuition_v1/components/stripe_api.dart';
 import 'package:merit_tuition_v1/pages/loginPage.dart';
 
-
 class PaymentType extends StatefulWidget {
   final String amount;
-  const PaymentType({required this.amount, super.key, });
+  final dynamic paymentIds;
+  const PaymentType({
+    required this.amount,
+    required this.paymentIds,
+    super.key,
+  });
   @override
   // ignore: library_private_types_in_public_api
   _PaymentTypeState createState() => _PaymentTypeState();
@@ -17,7 +21,6 @@ class _PaymentTypeState extends State<PaymentType> {
 
   @override
   Widget build(BuildContext context) {
-    
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -61,32 +64,27 @@ class _PaymentTypeState extends State<PaymentType> {
             const SizedBox(height: 42.0),
             Row(
               children: [
-                Container(
-                  width: 150.0,
-                  height: 188.0,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20.0),
-                    color: const Color(
-                      0xFFFFFFFF, // Replace with the desired background color
-                    ),
-                    border: Border.all(
-                      color: isBank
-                          ? Colors.green
-                          : Colors.grey, // Border color change
-                      width: 2.0, // Border thickness
-                    ),
-                  ),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        isStripe = false;
-                        isBank = true;
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors
-                          .transparent, // Set the button's background to transparent
-                      elevation: 0, // Remove button elevation
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      isStripe = false;
+                      isBank = true;
+                    });
+                  },
+                  child: Container(
+                    width: 150.0,
+                    height: 188.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20.0),
+                      color: const Color(
+                        0xFFFFFFFF, // Replace with the desired background color
+                      ),
+                      border: Border.all(
+                        color: isBank
+                            ? Colors.green
+                            : Colors.grey, // Border color change
+                        width: 2.0, // Border thickness
+                      ),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -111,32 +109,27 @@ class _PaymentTypeState extends State<PaymentType> {
                   ),
                 ),
                 const SizedBox(width: 19.0),
-                Container(
-                  width: 150.0,
-                  height: 188.0,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20.0),
-                    color: const Color(
-                      0xFFFFFFFF, // Replace with the desired background color
-                    ),
-                    border: Border.all(
-                      color: isStripe
-                          ? Colors.green
-                          : Colors.grey, // Border color change
-                      width: 2.0, // Border thickness
-                    ),
-                  ),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        isStripe = true;
-                        isBank = false;
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors
-                          .transparent, // Set the button's background to transparent
-                      elevation: 0, // Remove button elevation
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      isStripe = true;
+                      isBank = false;
+                    });
+                  },
+                  child: Container(
+                    width: 150.0,
+                    height: 188.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20.0),
+                      color: const Color(
+                        0xFFFFFFFF, // Replace with the desired background color
+                      ),
+                      border: Border.all(
+                        color: isStripe
+                            ? Colors.green
+                            : Colors.grey, // Border color change
+                        width: 2.0, // Border thickness
+                      ),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -169,9 +162,9 @@ class _PaymentTypeState extends State<PaymentType> {
               //  heightFactor: 1.0,
               child: ElevatedButton(
                 onPressed: () {
-                  if(isStripe){
-                    StripeAPI.createStripeCustomer().then((value) =>  StripeAPI.makePayment(widget.amount, "EUR", context));
-
+                  if (isStripe) {
+                    StripeAPI.createStripeCustomer().then((value) =>
+                        StripeAPI.makePayment(widget.paymentIds, widget.amount, "EUR", context));
                   }
                 },
                 style: ElevatedButton.styleFrom(

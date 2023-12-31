@@ -3,8 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:merit_tuition_v1/components/stripe_api.dart';
+
 import 'package:merit_tuition_v1/constants/colors.dart';
 import 'package:merit_tuition_v1/constants/icons.dart';
 import 'package:merit_tuition_v1/pages/paymentType.dart';
@@ -27,7 +26,11 @@ class _FeesDetailsState extends State<FeesDetails> {
   double totalFees = 0.0;
   double totalPaid = 0.0;
   double totalDue = 0.0;
+  List paymentIds = [];
+  List<dynamic> result = [];
   String feesType = "all";
+  
+  get ids => null;
 
   Future<List<dynamic>> getStudentBills() async {
     totalFees = 0.0;
@@ -38,28 +41,39 @@ class _FeesDetailsState extends State<FeesDetails> {
     var token = sharedPreferences.getString('token');
     var url = feesType == "all"
         ? Uri.parse(
-            'http://admin.merittutors.co.uk/api/student-bills/${widget.studentId}')
+            'http://35.176.201.155/api/student-bills/${widget.studentId}')
         : Uri.parse(
-            'http://admin.merittutors.co.uk/api/student-bills/49?month=${feesType.split('-')[1]}&& year=${feesType.split('-')[0]}');
+            'http://35.176.201.155/api/student-bills/49?month=${feesType.split('-')[1]}&& year=${feesType.split('-')[0]}');
     http.Response response = await http.get(
       url,
       headers: {
         'Authorization':
-            'Token cad630c784379382520b9b37b4e2bd5b1f63ebc4', // Add the authorization header
+            'Token $token', // Add the authorization header
       },
     );
     print(response.body);
 
     if (response.statusCode == 200) {
       try {
-        List<dynamic> result = jsonDecode(response.body);
+        result = jsonDecode(response.body);
+        paymentIds.clear();
         print(result);
         result.forEach((element) {
+          print(element);
+          if(double.parse(element["due"])>0)
+          {
+            paymentIds.add(element['id']);
+          }
+          
           totalFees += double.parse(element["fee"]);
           totalPaid += double.parse(element["paid"]);
           totalDue += double.parse(element["due"]);
+          print(double.parse(element["due"]));
+          // if (totalDue < 0.001) {
+          //   totalDue = totalDue * (-1.0);
+          // }
         });
-
+        print({totalDue, totalPaid});
         return result;
       } catch (e) {
         print(response);
@@ -76,18 +90,57 @@ class _FeesDetailsState extends State<FeesDetails> {
     }
   }
 
+  void _popThisScreen(BuildContext context) {
+    Navigator.of(context).pop();
+  }
+
+  void navigateToPaymentType() {
+    if (totalDue > 0.0) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  PaymentType(paymentIds: paymentIds, amount: (totalDue * 100).toInt().toString())));
+    } else {
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Payment is already paid'),
+        backgroundColor: Colors.red,
+      ));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    BuildContext thiscontext = context;
     final double height = MediaQuery.of(context).size.height;
     final double width = MediaQuery.of(context).size.width;
-
     return FutureBuilder<List<dynamic>>(
       future: getStudentBills(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          // While waiting for data, you can show a loading indicator.
           return Scaffold(
-              appBar: FeesAppBar(title: "Fees Details", onTap: () {}),
+              appBar: AppBar(
+                scrolledUnderElevation: 0.0,
+                elevation: 0.0,
+                leading: IconButton(
+                  onPressed: () {
+                    print("LKDF");
+                    _popThisScreen(thiscontext);
+                  },
+                  icon: Icon(Icons.keyboard_arrow_left),
+                  color: Colors.black,
+                ),
+                backgroundColor: Colors.transparent,
+                title: Text(
+                  "Fees Details",
+                  style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF000000)),
+                ),
+                centerTitle: true,
+              ),
               body: Center(
                 child: Container(
                   width: 100, // Adjust the width as needed
@@ -104,6 +157,8 @@ class _FeesDetailsState extends State<FeesDetails> {
           return Text('Error: ${snapshot.error}');
         } else {
           // Data has been successfully fetched.
+          print("THIS IS SNAPSHOT");
+          print(snapshot.data);
 
           final studentBills = snapshot.data!;
 
@@ -111,35 +166,70 @@ class _FeesDetailsState extends State<FeesDetails> {
             floatingActionButton: Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 20, 20),
               child: GestureDetector(
-                onTap: () {
-                  
-                  // StripeAPI.createStripeCustomer().then((value) =>  StripeAPI.makePayment("65", "USD", context));
-                  if (totalDue != null) {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => PaymentType(amount: (totalDue.abs()*100).toInt().toString())));
-                  }
-                },
-                child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  SvgPicture.asset(
-                    arrowRightIcon1,
-                    height: 20,
-                    width: 20,
-                    fit: BoxFit.contain,
-                  ),
-                  Text(
-                    'Pay Now',
-                    style: TextStyle(
-                      color: Color(0xFFFB95E1),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                  onTap: () {
+                    // StripeAPI.createStripeCustomer().then((value) =>  StripeAPI.makePayment("65", "USD", context));
+                    navigateToPaymentType();
+                  },
+                  child: IntrinsicWidth(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: Color.fromARGB(
+                            255, 245, 232, 174), // Your background color
+                      ),
+                      padding: EdgeInsets.fromLTRB(3, 5, 8, 5),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            SvgPicture.asset(
+                              arrowRightIcon1,
+                              height: 24,
+                              width: 24,
+                              fit: BoxFit.contain,
+                            ),
+                            Text(
+                              'Pay Now',
+                              style: TextStyle(
+                                color: Color(0xFFFB95E1),
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            )
+                          ]),
                     ),
-                  )
-                ]),
-              ),
+                  )),
             ),
-            appBar: FeesAppBar(title: "Fees Details", onTap: () {}),
+            appBar: AppBar(
+              scrolledUnderElevation: 0.0,
+              elevation: 0.0,
+              leading: IconButton(
+                onPressed: () {
+                  print("LKDF");
+                  _popThisScreen(thiscontext);
+                },
+                icon: Icon(Icons.keyboard_arrow_left),
+                color: Colors.black,
+              ),
+              backgroundColor: Colors.transparent,
+              title: Text(
+                "Fees Details",
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF000000)),
+              ),
+              centerTitle: true,
+              // actions: [
+              //   GestureDetector(
+              //       onTap: () {
+              //         //filter button code
+              //       },                          ///commented on 2 DEC
+              //       child: Icon(Icons.filter_alt_outlined)),
+              //   SizedBox(
+              //     width: 5,
+              //   )
+              // ],
+            ),
             body: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
@@ -147,7 +237,7 @@ class _FeesDetailsState extends State<FeesDetails> {
                   children: [
                     const SizedBox(height: 20),
                     SizedBox(
-                      height: 170,
+                      height: 80,
                       child: Stack(
                         children: [
                           Container(
@@ -192,13 +282,13 @@ class _FeesDetailsState extends State<FeesDetails> {
                           OverflowBox(
                             alignment: Alignment(1.0, -2.0),
                             maxHeight:
-                                150, // Adjust this value to control the overflow
+                                70, // Adjust this value to control the overflow
                             child: Image.asset(
                               "assets/images/fees_details.png",
                               fit: BoxFit
                                   .cover, // You can adjust the fit as needed
-                              width: 140, // Adjust the width as needed
-                              height: 140, // Adjust the height as needed
+                              width: 75, // Adjust the width as needed
+                              height: 75, // Adjust the height as needed
                             ),
                           ),
                         ],
@@ -225,7 +315,7 @@ class _FeesDetailsState extends State<FeesDetails> {
                       ],
                     ),
                     const SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -274,35 +364,57 @@ class _FeesDetailsState extends State<FeesDetails> {
                       height: 15,
                     ),
                     Container(
-                      height: height * 0.4,
+                      height: height * 0.6,
                       width: double.infinity,
-                      child: Expanded(
-                        child: Scrollbar(
-                          thickness: 5,
-                          trackVisibility: false,
-                          interactive: true,
-                          thumbVisibility: true,
-                          controller: _feesScrollController,
-                          radius: const Radius.circular(5),
-                          child: GridView.builder(
-                              gridDelegate:
-                                  const SliverGridDelegateWithMaxCrossAxisExtent(
-                                maxCrossAxisExtent: 300,
-                                crossAxisSpacing: 10,
-                                mainAxisSpacing: 20,
-                              ),
-                              itemCount: studentBills.length,
-                              itemBuilder: (context, index) {
-                                return FeesDetailsCard(
-                                  feesType: studentBills[index]["title"],
-                                  amount: studentBills[index]["fee"],
-                                  paymentStatus: studentBills[index]["status"],
-                                  ontap: () {},
-                                );
-                              }),
-                        ),
+                      child: Scrollbar(
+                        thickness: 5,
+                        trackVisibility: false,
+                        interactive: true,
+                        thumbVisibility: true,
+                        controller: _feesScrollController,
+                        radius: const Radius.circular(5),
+                        child: ListView.separated(
+                            itemCount: studentBills.length,
+                            separatorBuilder: ((context, index) {
+                              return SizedBox(
+                                height: 10,
+                              );
+                            }),
+                            itemBuilder: (context, index) {
+                              final double? paid =
+                                  double.tryParse(studentBills[index]["paid"]);
+                              final double? due =
+                                  double.tryParse(studentBills[index]["due"]);
+                              final double? fee =
+                                  double.tryParse(studentBills[index]["fee"]);
+                              return FeesDetailsCard(
+                                title: studentBills[index]["title"],
+                                fee: fee!,
+                                paidBill: paid!,
+                                dueBill: due!,
+                                month: studentBills[index]["bill_date"],
+                                onPressed: () {
+                                  if (due != null) {
+                                     List<dynamic> ids = [];
+                                     ids.add(result[index]['id']);
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => PaymentType(
+                                                paymentIds: ids,
+                                                amount: (due.abs() * 100)
+                                                    .toInt()
+                                                    .toString())));
+                                  }
+                                },
+                                status: '',
+                              );
+                            }),
                       ),
                     ),
+                    SizedBox(
+                      height: 10,
+                    )
                   ],
                 ),
               ),

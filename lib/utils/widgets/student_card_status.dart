@@ -18,13 +18,14 @@ class StudentCardDetails extends StatelessWidget {
           Text(
             heading,
             style: TextStyle(
-                color: Colors.black, fontSize: 15, fontWeight: FontWeight.w600),
+                color: Colors.black, fontSize: 12, fontWeight: FontWeight.w600),
           ),
           Text(
             status,
             style: TextStyle(
                 color: const Color(0xFF898989),
                 fontSize: 12,
+                overflow: TextOverflow.ellipsis,
                 fontWeight: FontWeight.w400),
           ),
         ],

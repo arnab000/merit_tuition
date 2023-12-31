@@ -32,8 +32,7 @@ class _ParentsHomeState extends State<ParentsHome> {
     final SharedPreferences sharedPreferences =
         await SharedPreferences.getInstance();
     var token = sharedPreferences.getString('token');
-    var url =
-        Uri.parse('http://admin.merittutors.co.uk/api/profile?userType=parent');
+    var url = Uri.parse('http://35.176.201.155/api/profile?userType=parent');
     http.Response response = await http.get(
       url,
       headers: {
@@ -62,6 +61,13 @@ class _ParentsHomeState extends State<ParentsHome> {
     }
   }
 
+  Future<void> _logOut() async {
+    final SharedPreferences sharedPreferences =
+        await SharedPreferences.getInstance();
+    sharedPreferences.clear();
+    Navigator.of(context).popUntil((route) => route.settings.name == '/');
+  }
+
   @override
   void initState() {
     _getName();
@@ -73,87 +79,57 @@ class _ParentsHomeState extends State<ParentsHome> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const ParentsAppBar(
-        notificationAvailable: true,
+        notificationAvailable:
+            true, //commented at 2 DEC 2023 for design purposes
         notificationCount: 5,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: GestureDetector(
-        onTap: () => {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const AddStudentPage()))
-        },
-        child: Container(
-          width: 60,
-          height: 60,
-          padding: const EdgeInsets.all(16),
-          decoration:
-              const BoxDecoration(color: primaryColor, shape: BoxShape.circle),
-          child: const SvgIcon(path: homeIcon),
-        ),
-      ),
-      body: isListEmpty
-          ? Padding(
-              padding: const EdgeInsets.fromLTRB(15, 15, 15, 10),
-              child: Center(
-                child: Material(
-                  elevation: 1.5,
-                  child: Container(
-                    height: MediaQuery.of(context).size.height * 0.4,
-                    decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.rectangle,
-                        border: Border()),
-                  ),
-                ),
+      body: Container(
+        height: MediaQuery.of(context).size.height - 20,
+        width: double.infinity,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(15, 15, 15, 10),
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 2,
               ),
-            )
-          : Padding(
-              padding: const EdgeInsets.fromLTRB(15, 15, 15, 10),
-              child: Column(
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      const Text(
-                        welcomeText, /////  WELCOME BACK TEXT
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                            color: Color(welcomeTextColor)),
-                      ),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      Text(
-                        name,
-
-                        /// NAME OF PARENT
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w700, fontSize: 22),
-                      )
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(2, 0, 0, 0),
-                        child: Text(
-                          "Students",
-                          style: TextStyle(
-                              fontSize: 22, fontWeight: FontWeight.w700),
-                        ),
-                      )
-                    ],
-                  ),
-                  Students(rootcontext: context)
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(2, 0, 0, 0),
+                    child: Text(
+                      "STUDENTS",
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+                    ),
+                  )
                 ],
               ),
-            ),
-      drawer: const Drawer(),
-      bottomNavigationBar: ParentsBottomNavBar(context),
+              Students(rootcontext: context),
+              //  ElevatedButton(onPressed: (){}, child: child)
+            ],
+          ),
+        ),
+      ),
+      drawer: Drawer(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            ListTile(
+              leading: Icon(
+                Icons.logout,
+                color: Colors.red,
+              ),
+              title: Text("LogOut"),
+              onTap: () {
+                _logOut();
+              },
+            )
+          ],
+        ),
+      ),
+      //  bottomNavigationBar: ParentsBottomNavBar(context),
     );
   }
 }

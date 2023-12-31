@@ -52,36 +52,39 @@ class _SignUpPageState extends State<SignUpPage> {
     final String designation = _designationController.text;
     final String userType = _userTypeController.text;
     final String referCode = _referCodeController.text;
-    var url = Uri.parse('http://admin.merittutors.co.uk/api/sign-up');
-    http.Response response = await http.post(url,
-        body: {
-        'email': email, 
-        'password': password, 
-        'userType': userType,
-        'name': name,
-        'phone': phone,
-        'address': address,
-        'postcode': postCode,
-        'dob': dob,
-        'emergency_phone': emergencyPhone,
-        'relationship': relationShip,
-        'profession': profession,
-        'designation': designation,
-        'userType': userType,
-        'refer_code': referCode
-        });
+    var url = Uri.parse('http://35.176.201.155/api/sign-up');
+    http.Response response = await http.post(url, body: {
+      'email': email,
+      'password': password,
+      'userType': userType,
+      'name': name,
+      'phone': phone,
+      'address': address,
+      'postcode': postCode,
+      'dob': dob,
+      'emergency_phone': emergencyPhone,
+      'relationship': relationShip,
+      'profession': profession,
+      'designation': designation,
+      'userType': userType,
+      'refer_code': referCode
+    });
 
     if (response.statusCode == 200) {
       try {
         Map<String, dynamic> result = jsonDecode(response.body);
         // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Successfully Signed Up'),
-        backgroundColor: Colors.green,
-      ));
+          content: Text('Successfully Signed Up'),
+          backgroundColor: Colors.green,
+        ));
         // ignore: use_build_context_synchronously
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const LoginPage(userType: 'parent',)));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const LoginPage(
+                      userType: 'parent',
+                    )));
 
         print(result);
       } catch (e) {
@@ -90,7 +93,7 @@ class _SignUpPageState extends State<SignUpPage> {
       return;
     } else {
       // ignore: use_build_context_synchronously
-      print( jsonDecode(response.body));
+      print(jsonDecode(response.body));
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Something went wrong,please try again'),
         backgroundColor: Colors.red,
@@ -105,20 +108,10 @@ class _SignUpPageState extends State<SignUpPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Row(children: [
-          const Text(
-            'Register Yourself!',
-            style: headerStyle,
-          ),
-          const SizedBox(
-            width: 16,
-          ),
-          Image.asset(
-            'assets/register.png',
-            height: 20,
-            width: 20,
-          )
-        ]),
+        title: const Text(
+          'Register Yourself!',
+          style: headerStyle,
+        ),
       ),
       body: ListView(children: <Widget>[
         Padding(
@@ -243,8 +236,11 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                const Center(child:  Text("Already have a account?", style: normalTextStyle,)),
-                
+                const Center(
+                    child: Text(
+                  "Already have a account?",
+                  style: normalTextStyle,
+                )),
                 Center(
                   child: TextButton(
                       onPressed: () {
@@ -253,8 +249,10 @@ class _SignUpPageState extends State<SignUpPage> {
                             MaterialPageRoute(
                                 builder: (context) => const UserType()));
                       },
-                      child: const Text("Log into your account", style: nyonTextStyle,)
-                      ),
+                      child: const Text(
+                        "Log into your account",
+                        style: nyonTextStyle,
+                      )),
                 )
               ]),
         ),

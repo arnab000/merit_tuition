@@ -32,8 +32,8 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
       var token = sharedPreferences.getString('token');
       print(token);
       final url = date.isEmpty
-          ? 'http://admin.merittutors.co.uk/api/teacher-lessons'
-          : 'http://admin.merittutors.co.uk/api/teacher-lessons?date=$date';
+          ? 'http://35.176.201.155/api/teacher-lessons'
+          : 'http://35.176.201.155/api/teacher-lessons?date=$date';
       http.Response response = await http.get(
         Uri.parse(url),
         headers: {
@@ -63,8 +63,7 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
     final SharedPreferences sharedPreferences =
         await SharedPreferences.getInstance();
     var token = sharedPreferences.getString('token');
-    var url = Uri.parse(
-        'http://admin.merittutors.co.uk/api/profile?userType=teacher');
+    var url = Uri.parse('http://35.176.201.155/api/profile?userType=teacher');
     http.Response response = await http.get(
       url,
       headers: {
@@ -75,7 +74,7 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
     if (response.statusCode == 200) {
       try {
         Map<String, dynamic> result = jsonDecode(response.body);
-        
+
         setState(() {
           var user = result['user'];
           name = user['first_name'];

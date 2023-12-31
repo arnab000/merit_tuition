@@ -3,6 +3,7 @@ class Student {
   final User user;
   final String branch;
   final String level;
+  final double due;
   final String school;
   final String yearGroup;
   final String studentId;
@@ -23,6 +24,7 @@ class Student {
   Student({
     required this.id,
     required this.user,
+    required this.due,
     required this.branch,
     required this.level,
     required this.school,
@@ -51,7 +53,8 @@ class User {
   final String? phone;
   final String address;
   final String postcode;
-  final dynamic photo; // You can specify the correct type for the photo if needed.
+  final dynamic
+      photo; // You can specify the correct type for the photo if needed.
 
   User({
     required this.firstName,
