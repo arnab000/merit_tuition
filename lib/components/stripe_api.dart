@@ -76,30 +76,39 @@ class StripeAPI {
     }
   }
 
-   static Future<void> updatePaymentStatus(id, context, amount) async {
+   static Future<void> updatePaymentStatus(ids, context, amount,studentId) async {
     
     final SharedPreferences sharedPreferences =
         await SharedPreferences.getInstance();
     var token = sharedPreferences.getString('token');
-    print('https://merittutors.uk/api/update-payment/$id');
-    var url = Uri.parse('https://merittutors.uk/api/update-payment/$id');
+    print('http://35.176.201.155/api/student-payments/$studentId');
+    print('Token $token');
+    print('bill $ids');
+    var url = Uri.parse('http://35.176.201.155/api/student-payments/$studentId');
 
     Map<String, dynamic> body = {
+        'voucher': '',
         'paid': amount.toString(),
         'status': "Success",
-        'payment_method': 'Stripe'
+        'method': 'Stripe',
+        'payer_name': '',
+        'payment_date': '2023-07-29',
+        'bill': ids.join(','),
+        'subtotal': "100",
+        'used_balance': '0',
+        'remarks': '',
+        'discount_type': 'flat',
+        'discount': '10',
+        'reference_number': '',
+        'bank': ''
       };
-    http.Response response = await http.put(
+    http.Response response = await http.post(
       url,
       headers: {
         'Authorization':
             'Token $token', // Add the authorization header
       },
-      body: {
-        'paid': amount.toString(),
-        'status': 'Success',
-        'payment_method': 'Stripe'
-      }
+      body: body
 
     );
     print(response.body);
@@ -107,6 +116,7 @@ class StripeAPI {
     if (response.statusCode == 200) {
        print('good job');
     } else {
+      print('baaal');
       print(response);
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -119,7 +129,7 @@ class StripeAPI {
   }
 
 
-   static Future<void> makePayment(dynamic ids,
+   static Future<void> makePayment(dynamic studentId, dynamic ids,
       String amount, String currency, BuildContext context) async {
     Map<String, dynamic>? paymentIntentData;
     try {
@@ -146,10 +156,9 @@ class StripeAPI {
           content: Text("Payment is successfull"),
           backgroundColor: Colors.green,
         ));
-        for (var id in ids) {
-          // ignore: use_build_context_synchronously
-          updatePaymentStatus(id, context, amount);
-        }
+       
+          updatePaymentStatus(ids, context, amount, studentId);
+        
         
       }
     } catch (e) {

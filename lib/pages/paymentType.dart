@@ -5,9 +5,11 @@ import 'package:merit_tuition_v1/pages/loginPage.dart';
 class PaymentType extends StatefulWidget {
   final String amount;
   final dynamic paymentIds;
+  final dynamic studentId;
   const PaymentType({
     required this.amount,
     required this.paymentIds,
+    required this.studentId,
     super.key,
   });
   @override
@@ -164,7 +166,7 @@ class _PaymentTypeState extends State<PaymentType> {
                 onPressed: () {
                   if (isStripe) {
                     StripeAPI.createStripeCustomer().then((value) =>
-                        StripeAPI.makePayment(widget.paymentIds, widget.amount, "EUR", context));
+                        StripeAPI.makePayment(widget.studentId,widget.paymentIds, widget.amount, "EUR", context));
                   }
                 },
                 style: ElevatedButton.styleFrom(

@@ -100,7 +100,7 @@ class _FeesDetailsState extends State<FeesDetails> {
           context,
           MaterialPageRoute(
               builder: (context) =>
-                  PaymentType(paymentIds: paymentIds, amount: (totalDue * 100).toInt().toString())));
+                  PaymentType(studentId: widget.studentId, paymentIds: paymentIds, amount: (totalDue * 100).toInt().toString())));
     } else {
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -401,6 +401,7 @@ class _FeesDetailsState extends State<FeesDetails> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) => PaymentType(
+                                                studentId: widget.studentId,
                                                 paymentIds: ids,
                                                 amount: (due.abs() * 100)
                                                     .toInt()
